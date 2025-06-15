@@ -1,0 +1,24 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: Nexus-Traffic-Manager
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true  # Enable dynamic routing by service name
+      routes:
+        - id: pigeon-service
+          uri: lb://PIGEON  # Eureka service name
+          predicates:
+            - Path=/pigeon/**
+          filters:
+            - RewritePath=/pigeon/(?<segment>.*), /${segment}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
