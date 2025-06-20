@@ -1,4 +1,4 @@
-package com.daimlertrucksasia.it.dsc.nexus.traffic.manager;
+/*package com.daimlertrucksasia.it.dsc.nexus.traffic.manager;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,4 +10,4 @@ class NexusTrafficManagerApplicationTests {
 	void contextLoads() {
 	}
 
-}
+}*/

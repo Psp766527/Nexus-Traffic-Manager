@@ -1,24 +1,83 @@
+#server:
+#  port: 8090
+
+#spring:
+#  application:
+#    name: NexusTrafficManager
+#  main:
+#    web-application-type: reactive
+
+#  cloud:
+#    gateway:
+#      discovery:
+#        locator:
+#          enabled: true  # Enables automatic route discovery from Eureka
+
+ #     routes:
+  #      - id: pigeon-service
+   #       uri: lb://PIGEON  # Eureka service name (must match registered service ID)
+    #      predicates:
+     #       - Path=/pigeon/**
+      #    filters:
+           # - StripPrefix=1
+       #     - name: RateLimiter
+        #      args: { }
+           # - StripPrefix=1
+         #   - RewritePath=/pigeon/(?<segment>.*), /${segment}
+
+  #logging:
+   # level:
+    #  org.springframework.cloud.gateway: DEBUG
+     # reactor.netty.http.client: DEBUG
+#eureka:
+ # client:
+  #  service-url:
+   #   defaultZone: http://localhost:8761/eureka/
+    #register-with-eureka: true
+
+#  instance:
+#    prefer-ip-address: true
+#    instance-id: ${spring.application.name}:${server.port}
+
+
 server:
   port: 8090
 
 spring:
   application:
-    name: Nexus-Traffic-Manager
+    name: NexusTrafficManager
+  main:
+    web-application-type: reactive
+
   cloud:
     gateway:
       discovery:
         locator:
-          enabled: true  # Enable dynamic routing by service name
+          enabled: true  # Automatically discover routes via Eureka
+         # lower-case-service-id: true  # Standardize service IDs to lowercase
+
       routes:
         - id: pigeon-service
-          uri: lb://PIGEON  # Eureka service name
+          uri: lb://pigeon  # Matches the lowercase service ID from Eureka
           predicates:
-            - Path=/pigeon/**
+            - Path=/pigeon/graphql
           filters:
-            - RewritePath=/pigeon/(?<segment>.*), /${segment}
+            - name: RateLimiterFilter  # Matches the @Component("RateLimiterFilter") bean name
+            - RewritePath=/pigeon/(?<segment>.*), /${segment}  # Transform to /graphql
+
+  logging:
+    level:
+      org.springframework.cloud.gateway: DEBUG
+      com.daimlertrucksasia.it.dsc.nexus.traffic.manager.filter: DEBUG  # Log the filter package
+      reactor.netty.http.client: DEBUG
+      reactor.netty.http.server: DEBUG
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true
+
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
